@@ -1,0 +1,89 @@
+{"level":"error","ts":1608545618.730431,"msg":"http: Server closed"}
+{"level":"warn","ts":1608545619.2314248,"msg":"Server has been shutdown at 2020-12-21 18:12:56.2770477 +0800 PST"}
+{"level":"info","ts":1608545670.8019688,"msg":"Web server started at 2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.3256192,"msg":"IP:127.0.0.1:49308:/register:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.3666203,"msg":"IP:127.0.0.1:49308:/static/stream-dashboard-ui-kit/assets/vendor/font-awesome/css/all.min.css:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.36762,"msg":"IP:127.0.0.1:49309:/static/stream-dashboard-ui-kit/assets/css/theme.css:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.3696191,"msg":"IP:127.0.0.1:49312:/static/assets/js/wasm_exec.js:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.3696191,"msg":"IP:127.0.0.1:49311:/static/sweetalert2/sweetalert2.css:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.456622,"msg":"IP:127.0.0.1:49309:/static/jquery/dist/jquery.min.js:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.4756255,"msg":"IP:127.0.0.1:49312:/static/assets/images/Maharlikans_Code_Top_Logo.png:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.4756255,"msg":"IP:127.0.0.1:49309:/static/stream-dashboard-ui-kit/assets/svg/mockups/mockup.svg:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.4756255,"msg":"IP:127.0.0.1:49311:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-1.svg:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.5036182,"msg":"IP:127.0.0.1:49308:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-2.svg:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.5046177,"msg":"IP:127.0.0.1:49314:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-3.svg:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.5046177,"msg":"IP:127.0.0.1:49315:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-4.svg:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.5046177,"msg":"IP:127.0.0.1:49311:/static/sweetalert2/sweetalert2.all.min.js:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.5076177,"msg":"IP:127.0.0.1:49309:/static/stream-dashboard-ui-kit/assets/vendor/font-awesome/webfonts/fa-regular-400.woff2:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.5306268,"msg":"IP:127.0.0.1:49309:/static/assets/js/auth/auth.wasm:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545676.662656,"msg":"IP:127.0.0.1:49311:/static/assets/images/favicon.ico:2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"error","ts":1608545692.5705512,"msg":"http: Server closed"}
+{"level":"warn","ts":1608545693.0710747,"msg":"Server has been shutdown at 2020-12-21 18:14:30.8009725 +0800 PST"}
+{"level":"info","ts":1608545696.4690745,"msg":"Web server started at 2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.2691333,"msg":"IP:127.0.0.1:49338:/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.3031363,"msg":"IP:127.0.0.1:49338:/static/stream-dashboard-ui-kit/assets/vendor/font-awesome/css/all.min.css:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.305136,"msg":"IP:127.0.0.1:49339:/static/stream-dashboard-ui-kit/assets/css/theme.css:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.3201332,"msg":"IP:127.0.0.1:49340:/static/sweetalert2/sweetalert2.css:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.3201332,"msg":"IP:127.0.0.1:49341:/static/assets/js/wasm_exec.js:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.376137,"msg":"IP:127.0.0.1:49339:/static/jquery/dist/jquery.min.js:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.387132,"msg":"IP:127.0.0.1:49339:/static/assets/images/Maharlikans_Code_Top_Logo.png:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.4031286,"msg":"IP:127.0.0.1:49339:/static/stream-dashboard-ui-kit/assets/svg/mockups/mockup.svg:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.4241323,"msg":"IP:127.0.0.1:49339:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-1.svg:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.42913,"msg":"IP:127.0.0.1:49339:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-2.svg:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.4341307,"msg":"IP:127.0.0.1:49339:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-3.svg:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.4571326,"msg":"IP:127.0.0.1:49339:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-4.svg:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.4571326,"msg":"IP:127.0.0.1:49338:/static/sweetalert2/sweetalert2.all.min.js:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.4921367,"msg":"IP:127.0.0.1:49338:/static/stream-dashboard-ui-kit/assets/vendor/font-awesome/webfonts/fa-regular-400.woff2:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.517131,"msg":"IP:127.0.0.1:49338:/static/assets/js/auth/auth.wasm:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545707.613142,"msg":"IP:127.0.0.1:49339:/static/assets/images/favicon.ico:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608545708.9601388,"msg":"IP:127.0.0.1:49338:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545708.9601388,"msg":"Username is Required"}
+{"level":"info","ts":1608545819.0576234,"msg":"IP:127.0.0.1:49405:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545819.0576234,"msg":"Username is Required"}
+{"level":"info","ts":1608545836.537863,"msg":"IP:127.0.0.1:49420:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545836.5388584,"msg":"Email is Required"}
+{"level":"info","ts":1608545847.3032725,"msg":"IP:127.0.0.1:49430:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545847.3042169,"msg":"Password is Required"}
+{"level":"info","ts":1608545847.3082328,"msg":"IP:127.0.0.1:49431:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545847.3102205,"msg":"Password is Required"}
+{"level":"info","ts":1608545854.1360795,"msg":"IP:127.0.0.1:49431:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545854.1370916,"msg":"Passwords didn't match, please try again"}
+{"level":"info","ts":1608545858.9947507,"msg":"IP:127.0.0.1:49431:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545858.9947507,"msg":"Passwords didn't match, please try again"}
+{"level":"info","ts":1608545874.0294986,"msg":"IP:127.0.0.1:49431:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545874.0294986,"msg":"Terms of Service is Required, By joining Maharlikans Code, you're agreeing to our terms and conditions."}
+{"level":"info","ts":1608545885.4839067,"msg":"IP:127.0.0.1:49431:/api/v1/user/register:2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"error","ts":1608545965.8212545,"msg":"http: Server closed"}
+{"level":"warn","ts":1608545966.3217719,"msg":"Server has been shutdown at 2020-12-21 18:14:56.4680704 +0800 PST"}
+{"level":"info","ts":1608546071.4305005,"msg":"Web server started at 2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.172656,"msg":"IP:127.0.0.1:49574:/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.2296755,"msg":"IP:127.0.0.1:49575:/static/stream-dashboard-ui-kit/assets/css/theme.css:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.230681,"msg":"IP:127.0.0.1:49577:/static/assets/js/wasm_exec.js:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.2316947,"msg":"IP:127.0.0.1:49576:/static/sweetalert2/sweetalert2.css:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.234657,"msg":"IP:127.0.0.1:49574:/static/stream-dashboard-ui-kit/assets/vendor/font-awesome/css/all.min.css:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.340671,"msg":"IP:127.0.0.1:49575:/static/jquery/dist/jquery.min.js:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.3416553,"msg":"IP:127.0.0.1:49574:/static/assets/images/Maharlikans_Code_Top_Logo.png:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.352658,"msg":"IP:127.0.0.1:49574:/static/stream-dashboard-ui-kit/assets/svg/mockups/mockup.svg:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.370653,"msg":"IP:127.0.0.1:49575:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-1.svg:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.3876836,"msg":"IP:127.0.0.1:49577:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-2.svg:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.3936684,"msg":"IP:127.0.0.1:49576:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-3.svg:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.4136505,"msg":"IP:127.0.0.1:49579:/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-4.svg:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.414664,"msg":"IP:127.0.0.1:49580:/static/sweetalert2/sweetalert2.all.min.js:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.419677,"msg":"IP:127.0.0.1:49574:/static/stream-dashboard-ui-kit/assets/vendor/font-awesome/webfonts/fa-regular-400.woff2:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.4486766,"msg":"IP:127.0.0.1:49574:/static/assets/js/auth/auth.wasm:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546075.6316607,"msg":"IP:127.0.0.1:49580:/static/assets/images/favicon.ico:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"info","ts":1608546088.8109093,"msg":"IP:127.0.0.1:49590:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608546088.8119104,"msg":"Invalid Email Address, please try again"}
+{"level":"info","ts":1608546102.7935667,"msg":"IP:127.0.0.1:49600:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608546102.7945573,"msg":"Invalid Email Address, please try again"}
+{"level":"info","ts":1608546114.804625,"msg":"IP:127.0.0.1:49608:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608546114.804625,"msg":"Invalid Email Address, please try again"}
+{"level":"info","ts":1608546114.8286195,"msg":"IP:127.0.0.1:49609:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608546114.8306346,"msg":"Invalid Email Address, please try again"}
+{"level":"info","ts":1608546120.7616565,"msg":"IP:127.0.0.1:49609:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608546120.7616565,"msg":"Invalid Email Address, please try again"}
+{"level":"info","ts":1608546132.7601857,"msg":"IP:127.0.0.1:49622:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608546132.7601857,"msg":"Invalid Email Address, please try again"}
+{"level":"info","ts":1608546137.6752017,"msg":"IP:127.0.0.1:49622:/api/v1/user/register:2020-12-21 18:21:11.4224968 +0800 PST"}
+{"level":"error","ts":1608547024.8585515,"msg":"http: Server closed"}
+{"level":"warn","ts":1608547025.3615518,"msg":"Server has been shutdown at 2020-12-21 18:21:11.4224968 +0800 PST"}
