@@ -29,43 +29,27 @@ func login(this js.Value, args []js.Value) interface{} {
 		return js.Global().Call("eval", `Swal.fire("Oops!, Error", "Unable to get remember option", "error");`)
 	}
 
-	var pUserName string = username.Get("value").String()
-	var pPassword string = password.Get("value").String()
-	pIsSiteKeepMe, _ := strconv.ParseBool(isSiteKeepMe.Get("value").String())
-
-	if len(strings.TrimSpace(pUserName)) == 0 {
-		return js.Global().Call("eval", `Swal.fire("Username is Required!", "Please enter your username!", "error");`)
-	}
-
-	if len(strings.TrimSpace(pPassword)) == 0 {
-		return js.Global().Call("eval", `Swal.fire("Password is Required!", "Please enter your password!", "error");`)
-	}
-
-	if len(strings.TrimSpace(pUserName)) == 0 {
-		return js.Global().Call("eval", `Swal.fire("Username is Required!", "Please enter your username!", "error");`)
-	}
-
-	if len(strings.TrimSpace(pPassword)) == 0 {
-		return js.Global().Call("eval", `Swal.fire("Password is Required!", "Please enter your username!", "error");`)
-	}
-
+	// Get the CSRF Token value from the client side
 	csrfToken := jsDoc.Call("getElementById", "csrfToken")
 	if !csrfToken.Truthy() {
 		return js.Global().Call("eval", `Swal.fire("Oops!", "Unable to get the CSRF token", "error");`)
 	}
-
 	var pCSRFToken string = csrfToken.Get("value").String()
+
+	var pUserName string = username.Get("value").String()
+	var pPassword string = password.Get("value").String()
+	var pSiteKeepMe bool = isSiteKeepMe.Get("checked").Bool()
 
 	// Compose the JSON post payload to teh API endpoint.
 	payLoad := map[string]interface{}{
 		"username":     pUserName,
 		"password":     pPassword,
-		"isSiteKeepMe": pIsSiteKeepMe,
+		"isSiteKeepMe": fmt.Sprint(pSiteKeepMe),
 	}
 
 	bytesRepresentation, err := json.Marshal(payLoad)
 	if err != nil {
-		return js.Global().Call("eval", `Swal.fire("Oops! Error", "Something went wrong with your login credentials", "error");`)
+		return js.Global().Call("eval", `Swal.fire("Oops! Error", "Something went wrong with your user's registration", "error");`)
 	}
 
 	// HTTP new request
@@ -105,22 +89,29 @@ func login(this js.Value, args []js.Value) interface{} {
 				i := result["IsSuccess"] // You must return with JSON format value of either 'true' or 'false' only.
 				mStatus := fmt.Sprint(i)
 				isSuccess, _ = strconv.ParseBool(mStatus)
+				alertTitle := fmt.Sprint(result["AlertTitle"])
+				alertMsg := fmt.Sprint(result["AlertMsg"])
+				alertType := fmt.Sprint(result["AlertType"])
+				redirectURL := fmt.Sprint(result["RedirectURL"])
 
 				msg := ""
 				if !isSuccess {
-					msg = `Swal.fire("Login Unsuccessful", "Either your username or password is wrong or account doesn't exist at all", "error");`
+					msg = `Swal.fire("` + alertTitle + `", "` + alertMsg + `", "` + alertType + `");` // error
 				} else {
-					msg = `Swal.fire("Login Successful", "Your account has been verified and it's successfully logged-in.", "success");`
+					msg = `Swal.fire("` + alertTitle + `", "` + alertMsg + `", "` + alertType + `");` // success
+				}
+				redirectTO := ""
+				if len(strings.TrimSpace(redirectURL)) > 0 {
+					redirectTO = `window.location.replace("` + redirectURL + `");`
 				}
 
-				return APIResponse(isSuccess, msg)
+				return APIResponse(isSuccess, msg, redirectTO)
 				break
 			case <-timeout:
 
 			}
 		}
 	}()
-
 	return nil
 }
 
@@ -170,7 +161,7 @@ func register(this js.Value, args []js.Value) interface{} {
 		"password":        pPassword,
 		"confirmPassword": pConfirmPassword,
 		"tos":             fmt.Sprint(pTOS),
-		"isActive":        "true",
+		"isActive":        "false",
 	}
 
 	bytesRepresentation, err := json.Marshal(payLoad)
@@ -218,6 +209,7 @@ func register(this js.Value, args []js.Value) interface{} {
 				alertTitle := fmt.Sprint(result["AlertTitle"])
 				alertMsg := fmt.Sprint(result["AlertMsg"])
 				alertType := fmt.Sprint(result["AlertType"])
+				redirectURL := fmt.Sprint(result["RedirectURL"])
 
 				msg := ""
 				if !isSuccess {
@@ -225,24 +217,29 @@ func register(this js.Value, args []js.Value) interface{} {
 				} else {
 					msg = `Swal.fire("` + alertTitle + `", "` + alertMsg + `", "` + alertType + `");` // success
 				}
+				redirectTO := ""
+				if len(strings.TrimSpace(redirectURL)) > 0 {
+					redirectTO = `window.location.replace("` + redirectURL + `");`
+				}
 
-				return APIResponse(isSuccess, msg)
+				return APIResponse(isSuccess, msg, redirectTO)
 				break
 			case <-timeout:
 
 			}
 		}
 	}()
-
 	return nil
 }
 
 // APIResponse is a generic swal response back to the JS client side
-func APIResponse(isSuccess bool, msg string) interface{} {
+func APIResponse(isSuccess bool, msg, redirectURL string) interface{} {
 	if !isSuccess {
-		return js.Global().Call("eval", msg)
+		if len(strings.TrimSpace(redirectURL)) == 0 {
+			return js.Global().Call("eval", msg)
+		}
 	}
-	return js.Global().Call("eval", msg)
+	return js.Global().Call("eval", redirectURL) // redirect to email activation sent page
 }
 
 func exposeGoFuncJS() {
