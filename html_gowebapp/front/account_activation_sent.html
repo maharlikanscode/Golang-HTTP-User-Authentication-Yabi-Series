@@ -1,0 +1,37 @@
+{{template "header_common" . }}
+<main class="d-flex align-items-center justify-content-center w-100 h-100" role="main">
+    <div class="container text-center">
+        <div class="u-error">
+            <span class="u-error__title">Email Activation Sent.</span>
+
+            <div class="u-error__text">
+                <img class="img-fluid position-relative u-z-index-3 mx-5" src="/static/assets/images/New User.png" alt="Image description">
+                <h1 class="mb-2">Email Activation Sent</h1>
+                <p>Please confirm your email address to complete the registration. 
+                    You should receive them shortly otherwise, kindly check your spam folder.
+                </p>
+                <a href="/login">Go to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <figure class="u-shape u-shape--top-right u-shape--position-1 d-none d-md-inline-block">
+        <img src="/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-1.svg" alt="Image description">
+    </figure>
+    <figure class="u-shape u-shape--centered u-shape--position-2 d-none d-md-inline-block">
+        <img src="/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-2.svg" alt="Image description">
+    </figure>
+    <figure class="u-shape u-shape--centered u-shape--position-3 d-none d-md-inline-block">
+        <img src="/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-3.svg" alt="Image description">
+    </figure>
+    <figure class="u-shape u-shape--bottom-left u-shape--position-4 d-none d-md-inline-block">
+        <img src="/static/stream-dashboard-ui-kit/assets/svg/shapes/shape-4.svg" alt="Image description">
+    </figure>
+</main>
+<script>
+    const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("/static/assets/js/auth/auth.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+</script>
+{{template "footer_common" . }}
