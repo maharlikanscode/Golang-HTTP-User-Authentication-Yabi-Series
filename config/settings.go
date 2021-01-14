@@ -39,6 +39,12 @@ const SiteFooterAccountTemplate = SiteRootTemplate + "layout/footer_account.html
 // SiteFooterDashTemplate is the absolute path for the common dashboard footer template for each HTML pages.
 const SiteFooterDashTemplate = SiteRootTemplate + "layout/footer_dash.html"
 
+// SiteHeaderTemplateCommon is the absolute path for the common header template for each HTML pages.
+const SiteHeaderTemplateCommon = SiteRootTemplate + "layout/header_common.html"
+
+// SiteFooterAccountTemplateCommon is the absolute path for the common user account footer template for each HTML pages.
+const SiteFooterAccountTemplateCommon = SiteRootTemplate + "layout/footer_common.html"
+
 // SiteBaseURL is the base URL for the site URL structure.
 const SiteBaseURL = "http://127.0.0.1:8081/"
 
@@ -69,8 +75,11 @@ const SiteTimeZone = "Asia/Manila"
 // SecretKeyCORS is the secret key combination for the CORS (Cross-Origin Resource Sharing) middleware token.
 const SecretKeyCORS = "n&@ix77r#^&^cgeb13w@!+pht^6qu-=("
 
+// UserCookieExp is the user's cookie expiration in number of days.
+const UserCookieExp = "30"
+
 // MyEncryptDecryptSK is for the Go's built-in encrypt and decrypt method.
 const MyEncryptDecryptSK = "mkc&1*~#^8^#s0^=)^^7%a12"
 
-// UserCookieExp is the user's cookie expiration in number of days.
-const UserCookieExp = "30"
+// SendGridAPIKey is the API key for the SendGrid SMTP server, make it encrypted later.
+const SendGridAPIKey = "YOUR_SENDGRID_API_KEY_HERE"
