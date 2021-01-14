@@ -9,5 +9,8 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/itrepablik/itrlog v1.0.3
 	github.com/itrepablik/sakto v1.0.5
+	github.com/itrepablik/sulat v1.0.7
 	github.com/itrepablik/tago v1.0.3
+	github.com/itrepablik/timaan v1.0.2
+	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 )

@@ -26,6 +26,11 @@ var CurrentLocalTime = sakto.GetCurDT(time.Now(), "Asia/Manila")
 // IsProdServerMode server mode indicator, make it true to switch to production server settings
 var IsProdServerMode bool = false // true
 
+func init() {
+	// Custom settings to initialize the itrlog.
+	itrlog.SetLogInit(50, 90, "logs_gowebapp", "")
+}
+
 func main() {
 	fmt.Println("Hello, WebAssembly!")
 	os.Setenv("TZ", config.SiteTimeZone) // Set the local timezone globally
