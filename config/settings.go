@@ -61,7 +61,7 @@ const SiteTopMenuLogo = "/static/assets/images/Maharlikans_Code_Top_Logo.png"
 const EmailLogo = SiteBaseURL + "static/assets/images/Maharlikans_Code_Top_Logo.png"
 
 // SiteEmail is the main technical support email for the company.
-const SiteEmail = "support@maharlikanscode.com"
+const SiteEmail = "maharlikanscode@gmail.com"
 
 // SitePhoneNumbers is the main contact numbers for the company.
 const SitePhoneNumbers = ""
@@ -76,7 +76,7 @@ const SiteTimeZone = "Asia/Manila"
 const SecretKeyCORS = "n&@ix77r#^&^cgeb13w@!+pht^6qu-=("
 
 // UserCookieExp is the user's cookie expiration in number of days.
-const UserCookieExp = "30"
+var UserCookieExp int = 30
 
 // MyEncryptDecryptSK is for the Go's built-in encrypt and decrypt method.
 const MyEncryptDecryptSK = "mkc&1*~#^8^#s0^=)^^7%a12"
