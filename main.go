@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"flag"
 	"fmt"
 	"gowebapp/api"
 	"gowebapp/config"
+	"gowebapp/yabi"
 	"net/http"
 	"os"
 	"os/signal"
@@ -90,9 +92,18 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
 
 	// Initialize the APIs here
-	api.MainRouters(r) // URLs for the main app.
-	api.AuthRouters(r) // URLs for the auth app.
+	api.MainRouters(r)      // URLs for the main app.
+	api.AuthRouters(r)      // URLs for the auth app.
+	api.DashboardRouters(r) // URLs for the auth app.
 
+	// Initialize the Yabi auth API here
+	yabiBaseURL := "http://" + webServerIP + "/" // default to dev localhost
+	if IsProdServerMode {
+		yabiBaseURL = config.SiteBaseURLProd
+	}
+	yabi.SetYabiConfig(&yabi.InitYabi{BaseURL: yabiBaseURL})
+
+	// Initializes the http server
 	srv := &http.Server{
 		Addr: webServerIP,
 		// Good practice to set timeouts to avoid Slowloris attacks.
@@ -102,11 +113,22 @@ func main() {
 		Handler:      r, // Pass our instance of gorilla/mux in.
 	}
 
+	// Initialize the MySQL server connection
+	// Open the MySQL DSB Connection
+	dbYabi, err := sql.Open("mysql", api.DBConStr(""))
+	if err != nil {
+		itrlog.Error(err)
+	}
+	defer dbYabi.Close()
+
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		msg := `Web server started at `
 		fmt.Println(msg, CurrentLocalTime)
 		itrlog.Info("Web server started at ", CurrentLocalTime)
+
+		yabi.RestoreToken(dbYabi, config.MyEncryptDecryptSK) // Restore the active yabi tokens
+
 		if err := srv.ListenAndServe(); err != nil {
 			itrlog.Error(err)
 		}
