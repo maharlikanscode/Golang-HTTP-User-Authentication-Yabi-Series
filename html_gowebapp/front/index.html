@@ -9,34 +9,18 @@
             <div class="u-login-form">
                 <form class="mb-3" action="/">
                     <div class="mb-3">
-                        <h1 class="h2">Welcome Back!</h1>
-                        <p class="small">Login to your dashboard with your registered email address and password.</p>
+                        <h1 class="h2">Welcome to {{.Settings.SiteFullName}}!</h1>
+                        <p class="small">We can learn <a href="https://golang.org/" target="_blank">Golang</a> together here in {{.Settings.SiteFullName}}, 
+                            Kindly Subscribe to my Youtube Channel to honor my work in each of my tutorial series.
+                            Thank you so much for your support!, May God Bless Us All, Thank you, and Bye-bye! Keep safe everyone!
+                        </p>
                     </div>
 
-                    <div class="form-group mb-4">
-                        <label for="email">Username</label>
-                        <input id="username" class="form-control" name="username" type="text" placeholder="">
-                    </div>
-
-                    <div class="form-group mb-4">
-                        <label for="password">Password</label>
-                        <input id="password" class="form-control" name="password" type="password" placeholder="">
-                    </div>
-
-                    <div class="form-group d-flex justify-content-between align-items-center mb-4">
-                        <div class="custom-control custom-checkbox">
-                            <input id="isSiteKeepMe" class="custom-control-input" name="isSiteKeepMe" type="checkbox">
-                            <label class="custom-control-label" for="isSiteKeepMe">Trust this computer for 30 days.</label>
-                        </div>
-
-                        <a class="link-muted small" href="/login">Forgot Password?</a>
-                    </div>
-
-                    <button type="button" class="btn btn-primary btn-block" onclick="loginForm();" id="btnLogin">Login</button>
+                    <a href="https://www.youtube.com/c/MaharlikansCode?sub_confirmation=1" type="button" class="btn btn-danger btn-block">Subscribe</a>
                 </form>
 
                 <p class="small">
-                    Don’t have an account? <a href="/register">Sign Up here</a>
+                    Already have an account? <a href="/login">Login here</a>
                 </p>
             </div>
 
