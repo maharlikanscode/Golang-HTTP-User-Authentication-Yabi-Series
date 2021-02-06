@@ -1,3 +1,44 @@
 {{define "footer_dash"}}
+        <!-- Footer -->
+        <footer class="u-footer d-md-flex align-items-md-center text-center text-md-left text-muted">
+            <ul class="list-inline small mb-3 mb-md-0">
+                <li class="list-inline-item mr-4">
+                    <a class="text-muted" href="/">About {{.Settings.SiteFullName}}</a>
+                </li>
+                <li class="list-inline-item">
+                    <a class="text-muted" href="https://www.youtube.com/c/MaharlikansCode?sub_confirmation=1">Subscribe</a>
+                </li>
+            </ul>
 
+            <small class="text-muted ml-auto">&copy; {{.Settings.SiteYear}} - {{.Settings.CurLocalTime.UTC.Year}}
+                <a class="text-muted" href="/">{{.Settings.SiteFullName}}</a>
+                - All Rights Reserved.
+            </small>
+        </footer>
+        <!-- End Footer -->
+    </div>
+</main>
+
+<!-- Global Vendor -->
+<script src="/static/stream-dashboard-ui-kit/assets/vendor/jquery/dist/jquery.min.js"></script>
+<script src="/static/stream-dashboard-ui-kit/assets/vendor/jquery-migrate/jquery-migrate.min.js"></script>
+<script src="/static/stream-dashboard-ui-kit/assets/vendor/popper.js/dist/umd/popper.min.js"></script>
+<script src="/static/stream-dashboard-ui-kit/assets/vendor/bootstrap/bootstrap.min.js"></script>
+
+<!-- Plugins -->
+<script src="/static/stream-dashboard-ui-kit/assets/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+
+<!-- Initialization  -->
+<script src="/static/stream-dashboard-ui-kit/assets/js/sidebar-nav.js"></script>
+<script src="/static/stream-dashboard-ui-kit/assets/js/main.js"></script>
+<script src="/static/assets/js/js-cookie/src/js.cookie.js" type="text/javascript" defer></script>
+
+<script>
+    const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("/static/assets/js/auth/auth.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+</script>
+</body>
+</html>
 {{end}}
