@@ -21,3 +21,14 @@ type User struct {
 	DateJoined  time.Time `json:"date_joined"`
 	IsActive    bool      `json:"is_active"`
 }
+
+// YabiUserToken is the exact table name for the "yabi_user_token" table
+const YabiUserToken = "yabi_user_token"
+
+// UserToken model collections for the user's persisted timaan token
+type UserToken struct {
+	TokenKey  string `json:"token_key"`
+	TokenData []byte `json:"token_data"`
+	TokenSrc  string `json:"token_src"`
+	ExpireOn  int64  `json:"expire_on"`
+}

@@ -11,10 +11,12 @@ import (
 	"github.com/itrepablik/itrlog"
 	"github.com/itrepablik/sakto"
 	"github.com/itrepablik/sulat"
+	"github.com/itrepablik/tago"
+	"github.com/itrepablik/timaan"
 )
 
 // LoginUser validate the user's account from the use
-func LoginUser(dbCon *sql.DB, u User, isSiteKeepMe bool) (bool, error) {
+func LoginUser(dbCon *sql.DB, u User, isSiteKeepMe bool, expireInDays int) (bool, error) {
 	// Check if userName is empty
 	if len(strings.TrimSpace(u.UserName)) == 0 {
 		return false, errors.New("Username is Required")
@@ -25,26 +27,81 @@ func LoginUser(dbCon *sql.DB, u User, isSiteKeepMe bool) (bool, error) {
 		return false, errors.New("Password is Required")
 	}
 
-	// Get the user's stored has password
+	// Get the user's stored hash password.
 	pwHash, err := GetUserPassword(dbCon, u.UserName)
 	if err != nil {
-		itrlog.Error(err)
 		return false, errors.New("Oops!, error getting user's credential, please try again")
 	}
-	fmt.Println("pwHash: ", pwHash)
-	fmt.Println("u.Password: ", u.Password)
 
-	// Now, match the two passwords, check if it's verified or not
-	isPasswordMatch, err := sakto.CheckPasswordHash(u.Password, pwHash)
+	// Now, match the two passwords, check if it's verified or not.
+	isPassHashMatch, err := sakto.CheckPasswordHash(u.Password, pwHash)
 	if err != nil {
-		itrlog.Error(err)
-		return false, errors.New("Oops!, hash password error, please try again")
+		return false, errors.New("Oops!, either of your username or password is wrong, please try again, thank you")
 	}
 
-	fmt.Println("isPasswordMatch: ", isPasswordMatch)
+	if isPassHashMatch {
+		// Get the user's information from the "yabi_user" table
+		mUser := GetUserInfo(dbCon, u.UserName)
 
-	// Get the user's stored hash password from the yabi_user table
-	return true, nil
+		// Generate new timaan token for the new user's session token
+		// Must convert all different type of values to a string value
+		tokenPayload := timaan.TP{
+			"USER_ID":       fmt.Sprint(mUser.ID),
+			"USERNAME":      fmt.Sprint(mUser.UserName),
+			"EMAIL":         fmt.Sprint(mUser.Email),
+			"FIRST_NAME":    fmt.Sprint(mUser.FirstName),
+			"MIDDLE_NAME":   fmt.Sprint(mUser.MiddleName),
+			"LAST_NAME":     fmt.Sprint(mUser.LastName),
+			"SUFFIX":        fmt.Sprint(mUser.Suffix),
+			"IS_SUPER_USER": fmt.Sprint(mUser.IsSuperUser),
+			"IS_ADMIN":      fmt.Sprint(mUser.IsAdmin),
+			"LAST_LOGIN":    fmt.Sprint(mUser.LastLogin),
+			"DATE_JOINED":   fmt.Sprint(mUser.DateJoined),
+		}
+
+		// Set the user's cookie expiry in days, if not provided, yabi use its default value to 30 days
+		if expireInDays < 1 {
+			expireInDays = ExpireCookieInDays // expire in 30 days
+		}
+
+		// Check if the isSiteKeepMe = true or not
+		var tokenExpiry int64 = time.Now().Add(time.Minute * 30).Unix() // default to 30 minutes
+		if isSiteKeepMe {
+			tokenExpiry = time.Now().Add(time.Hour * time.Duration(24*expireInDays)).Unix()
+		}
+
+		tok := timaan.TK{
+			TokenKey: mUser.UserName,
+			Payload:  tokenPayload,
+			ExpireOn: tokenExpiry,
+		}
+
+		encTokenBytes, err := timaan.GenerateToken(mUser.UserName, tok)
+		if err != nil {
+			itrlog.Error("error generating token during login: ", err)
+			return false, errors.New("Oops!, there was an error during encoding process, please try again, thank you")
+		}
+
+		// Encrypt the username value to store it from the user's cookie
+		encUserName, err := tago.Encrypt(mUser.UserName, config.MyEncryptDecryptSK)
+		if err != nil {
+			itrlog.Error("ERROR FROM encUserName: ", err)
+		}
+
+		// Store the authentication token
+		err = KeepToken(dbCon, encUserName, "auth", encTokenBytes, tokenExpiry)
+		if err != nil {
+			itrlog.Error("ERROR FROM KeepToken: ", err)
+			return false, errors.New("Oops!, keeping your session failed, please try again")
+		}
+
+		// Update the user's last login to a current timestamp
+		LastLogin(dbCon, mUser.UserName)
+
+		// Get the user's stored hash password from the yabi_user table
+		return true, nil
+	}
+	return false, errors.New("Invalid Credentials, either of your username or password is wrong, please try again, thank you")
 }
 
 // CreateUser add a new user to the users collection
@@ -231,4 +288,73 @@ func GetUserPassword(dbCon *sql.DB, userName string) (string, error) {
 		return "", err
 	}
 	return encPassword, nil
+}
+
+// GetUserInfo gets the user's information from the "yabi_user" table
+func GetUserInfo(dbCon *sql.DB, userName string) *User {
+	var u User
+	err := dbCon.QueryRow("SELECT id, username, email, first_name, middle_name, last_name, suffix, is_superuser, "+
+		"is_admin, IFNULL(last_login, NOW()), date_joined FROM "+YabiUser+" WHERE username = ? ORDER BY ID DESC LIMIT 1", userName).Scan(&u.ID,
+		&u.UserName, &u.Email, &u.FirstName, &u.MiddleName, &u.LastName, &u.Suffix, &u.IsSuperUser,
+		&u.IsAdmin, &u.LastLogin, &u.DateJoined)
+	if err != nil {
+		itrlog.Error("error getting username: ", userName, ":", err)
+		return &User{}
+	}
+	return &u
+}
+
+// LastLogin will update the specific user's last login with the current timestamp
+func LastLogin(dbCon *sql.DB, userName string) {
+	upd, err := dbCon.Prepare("UPDATE " + YabiUser + " SET last_login = ? WHERE username = ? AND is_active = ?")
+	if err != nil {
+		itrlog.Error("ERROR FROM LastLogin: ", err)
+	}
+	// Pass on all the parameter values here
+	upd.Exec(time.Now(), userName, true)
+	defer upd.Close()
+}
+
+// KeepToken stores the session token to the "yabi_user_token" table to make it persistent
+func KeepToken(dbCon *sql.DB, tokenKey, tokenSrc string, tokenData []byte, expireOn int64) error {
+	// Now, insert the new user's log here
+	ins, err := dbCon.Prepare("INSERT INTO " + YabiUserToken + " (token_key, token_data, token_src, expire_on) VALUES" +
+		"(?, ?, ?, ?)")
+
+	if err != nil {
+		return err
+	}
+
+	// Pass on all the parameter values here
+	ins.Exec(tokenKey, tokenData, tokenSrc, expireOn)
+
+	defer ins.Close()
+	return nil
+}
+
+// RestoreToken restores all the valid, unexpired tokens back to the map collections
+func RestoreToken(dbCon *sql.DB, secretKey string) {
+	tokens, err := dbCon.Query("SELECT token_key, token_data, token_src, expire_on "+
+		"FROM "+YabiUserToken+" WHERE expire_on >= ?", time.Now().Unix())
+
+	if err != nil {
+		itrlog.Error("ERROR FROM RestoreToken:", err)
+	}
+
+	for tokens.Next() {
+		var t UserToken
+		err = tokens.Scan(&t.TokenKey, &t.TokenData, &t.TokenSrc, &t.ExpireOn)
+
+		if err != nil {
+			itrlog.Error("ERROR FROM RestoreToken at tokens.Next():", err)
+		}
+
+		// Decrypt the username from the "yabi_user_token" table
+		userName, err := tago.Decrypt(t.TokenKey, secretKey)
+		if err != nil {
+			itrlog.Error(err)
+		} else {
+			timaan.UT.Add(userName, []byte(t.TokenData))
+		}
+	}
 }
