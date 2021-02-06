@@ -11,6 +11,12 @@ import (
 	"time"
 )
 
+// Server mode indicator, make it true to switch to production server settings
+var isProdServerMode bool = false // true
+
+// default localhost server ip with port number, include http://127.0.0.1:8081 without trailing '/' slash
+var serverIP string = "http://127.0.0.1:8081"
+
 func login(this js.Value, args []js.Value) interface{} {
 	jsDoc := js.Global().Get("document")
 	if !jsDoc.Truthy() {
@@ -53,7 +59,7 @@ func login(this js.Value, args []js.Value) interface{} {
 	}
 
 	// HTTP new request
-	siteHost := "http://127.0.0.1:8081/api/v1/user/login"
+	siteHost := serverIP + "/api/v1/user/login"
 	client := &http.Client{}
 
 	req, err := http.NewRequest("POST", fmt.Sprintf(siteHost), bytes.NewBuffer(bytesRepresentation))
@@ -93,6 +99,8 @@ func login(this js.Value, args []js.Value) interface{} {
 				alertMsg := fmt.Sprint(result["AlertMsg"])
 				alertType := fmt.Sprint(result["AlertType"])
 				redirectURL := fmt.Sprint(result["RedirectURL"])
+				encUserName := fmt.Sprint(result["EncUserName"])
+				userCookieExpDays := fmt.Sprint(result["UserCookieExpDays"])
 
 				msg := ""
 				if !isSuccess {
@@ -102,7 +110,9 @@ func login(this js.Value, args []js.Value) interface{} {
 				}
 				redirectTO := ""
 				if len(strings.TrimSpace(redirectURL)) > 0 {
-					redirectTO = `window.location.replace("` + redirectURL + `");`
+					redirectTO = `var expDaysInt = parseInt(` + userCookieExpDays + `, 10);
+					Cookies.set("yabi", "` + encUserName + `", { expires: expDaysInt, path: '' });
+					window.location.replace("` + redirectURL + `");`
 				}
 
 				return APIResponse(isSuccess, msg, redirectTO)
@@ -112,6 +122,7 @@ func login(this js.Value, args []js.Value) interface{} {
 			}
 		}
 	}()
+
 	return nil
 }
 
@@ -170,7 +181,7 @@ func register(this js.Value, args []js.Value) interface{} {
 	}
 
 	// HTTP new request
-	siteHost := "http://127.0.0.1:8081/api/v1/user/register"
+	siteHost := serverIP + "/api/v1/user/register"
 	client := &http.Client{}
 
 	req, err := http.NewRequest("POST", fmt.Sprintf(siteHost), bytes.NewBuffer(bytesRepresentation))
@@ -250,6 +261,12 @@ func exposeGoFuncJS() {
 
 func main() {
 	fmt.Println("Welcome to Maharlikans WASM tutorials")
+
+	// This will be overwritten when the isProdServerMode = true
+	if isProdServerMode {
+		serverIP = "https://your_production_server_id:portnumber"
+	}
+
 	c := make(chan bool, 1)
 
 	// Start exposing this following Go functions to JS
