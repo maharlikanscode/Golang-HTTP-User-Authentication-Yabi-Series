@@ -17,6 +17,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/itrepablik/itrlog"
 	"github.com/itrepablik/sulat"
+	"github.com/itrepablik/tago"
 	"github.com/itrepablik/timaan"
 )
 
@@ -39,6 +40,12 @@ func AuthRouters(r *mux.Router) {
 	r.HandleFunc("/register", Register).Methods("GET")
 	r.HandleFunc("/account_activation_sent", AccountActivationSent).Methods("GET")
 	r.HandleFunc("/activate/{token}", ActivateAccount).Methods("GET")
+	r.HandleFunc("/logout", Logout).Methods("GET")
+}
+
+// Logout function is to render the logout script from yabi
+func Logout(w http.ResponseWriter, r *http.Request) {
+	yabi.LogOut(w, r, config.MyEncryptDecryptSK)
 }
 
 // Register function is to render the user's registration page.
@@ -57,8 +64,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 // Login function is to render the homepage page.
 func Login(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles(config.SiteRootTemplate+"front/login.html", config.SiteHeaderTemplate, config.SiteFooterTemplate))
+	// If the user has been authenticated and wanted to re-access this login page, don't allow it
+	if ok := yabi.IsUserAuthenticated(w, r, config.MyEncryptDecryptSK); ok {
+		http.Redirect(w, r, "/dashboard", 302)
+	}
 
+	tmpl := template.Must(template.ParseFiles(config.SiteRootTemplate+"front/login.html", config.SiteHeaderTemplate, config.SiteFooterTemplate))
 	data := contextData{
 		"PageTitle":    "Login - " + config.SiteShortName,
 		"PageMetaDesc": config.SiteShortName + " account, sign in to access your account.",
@@ -87,10 +98,6 @@ func LoginUserEndpoint(w http.ResponseWriter, r *http.Request) {
 	password := keyVal["password"]
 	isSiteKeepMe, _ := strconv.ParseBool(keyVal["isSiteKeepMe"])
 
-	fmt.Println("userName: ", userName)
-	fmt.Println("password: ", password)
-	fmt.Println("isSiteKeepMe: ", isSiteKeepMe)
-
 	// Open the MySQL DSB Connection
 	dbYabi, err := sql.Open("mysql", DBConStr(""))
 	if err != nil {
@@ -98,14 +105,14 @@ func LoginUserEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	defer dbYabi.Close()
 
-	// User's credential payload
+	// New yabi user information
 	userAccount := yabi.User{
 		UserName: userName,
 		Password: password,
 	}
 
 	// Check the user's login credentials
-	isAccountValid, err := yabi.LoginUser(dbYabi, userAccount, isSiteKeepMe)
+	isAccountValid, err := yabi.LoginUser(dbYabi, userAccount, isSiteKeepMe, config.UserCookieExp)
 	if err != nil {
 		itrlog.Error(err)
 		w.Write([]byte(`{ "IsSuccess": "false", "AlertTitle": "User's Authentication Failed!", 
@@ -114,15 +121,33 @@ func LoginUserEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isAccountValid {
+		// Set the cookie expiry in days.
+		expDays := "1" // default to expire in 1 day, otherwise if 0, browser will automatically delete the cookie
+		if isSiteKeepMe {
+			expDays = fmt.Sprint(config.UserCookieExp)
+		}
+
+		// Encrypt the username value to store it from the user's cookie.
+		encryptedUserName, err := tago.Encrypt(userName, config.MyEncryptDecryptSK)
+
+		if err != nil {
+			itrlog.Error("ERROR FROM encryptedUserName: ", err)
+			// Failed encrypting the username
+			w.Write([]byte(`{ "IsSuccess": "true", "AlertTitle": "Authentication Failed", 
+			"AlertMsg": "Oops!, encryption failed, please try again",
+			"AlertType": "error", "RedirectURL": "", "EncUserName": "", "UserCookieExpDays": "" }`))
+			return
+		}
 		// Response back to the user about the succcessful user's authentication process
 		w.Write([]byte(`{ "IsSuccess": "true", "AlertTitle": "Login is Successful", 
 		"AlertMsg": "You've successfully validated your ` + config.SiteShortName + `'s account",
-		"AlertType": "success", "RedirectURL": "http://127.0.0.1:8081/dashboard" }`))
+		"AlertType": "success", "RedirectURL": "` + yabi.YB.BaseURL + `dashboard",
+		"EncUserName": "` + encryptedUserName + `", "UserCookieExpDays": "` + expDays + `" }`))
 	} else {
 		// Failed User's Credentials
 		w.Write([]byte(`{ "IsSuccess": "true", "AlertTitle": "Authentication Failed", 
 		"AlertMsg": "Login failed for user ` + userName + `, please try again",
-		"AlertType": "success", "RedirectURL": "" }`))
+		"AlertType": "error", "RedirectURL": "", "EncUserName": "", "UserCookieExpDays": "" }`))
 	}
 }
 
@@ -179,7 +204,7 @@ func RegisterUserEndpoint(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		itrlog.Error(err)
 	}
-	confirmURL := "http://127.0.0.1:8081/activate/" + newToken
+	confirmURL := yabi.YB.BaseURL + "activate/" + fmt.Sprint(newToken)
 
 	// Email confirmation
 	newUserEmailConfirmation := yabi.EmailConfig{
@@ -204,7 +229,7 @@ func RegisterUserEndpoint(w http.ResponseWriter, r *http.Request) {
 		// Response back to the user about the succcessful user's registration
 		w.Write([]byte(`{ "IsSuccess": "true", "AlertTitle": "New User", 
 		"AlertMsg": "You've successfully created a new ` + config.SiteShortName + `'s account.",
-		"AlertType": "success", "RedirectURL": "http://127.0.0.1:8081/account_activation_sent" }`))
+		"AlertType": "success", "RedirectURL": "` + yabi.YB.BaseURL + `account_activation_sent" }`))
 	} else {
 		// Insert the new user's registration here
 		_, err := yabi.CreateUser(dbYabi, newUser, newUserEmailConfirmation, confirmPassword, tos)
@@ -218,7 +243,7 @@ func RegisterUserEndpoint(w http.ResponseWriter, r *http.Request) {
 		// Response back to the user about the succcessful user's registration with auto-redirect to a successful page
 		w.Write([]byte(`{ "IsSuccess": "true", "AlertTitle": "Registration is Successful", 
 		"AlertMsg": "You've successfully created your new ` + config.SiteShortName + `'s account ",
-		"AlertType": "success", "RedirectURL": "http://127.0.0.1:8081/account_activation_sent" }`))
+		"AlertType": "success", "RedirectURL": "` + yabi.YB.BaseURL + `account_activation_sent" }`))
 	}
 }
 
