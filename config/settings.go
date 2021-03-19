@@ -82,4 +82,4 @@ var UserCookieExp int = 30
 const MyEncryptDecryptSK = "mkc&1*~#^8^#s0^=)^^7%a12"
 
 // SendGridAPIKey is the API key for the SendGrid SMTP server, make it encrypted later.
-const SendGridAPIKey = "YOUR_SENDGRID_API_KEY_HERE"
+const SendGridAPIKey = "YOUR_SENDGRID_API_KEY"
