@@ -101,7 +101,11 @@ func main() {
 	if IsProdServerMode {
 		yabiBaseURL = config.SiteBaseURLProd
 	}
-	yabi.SetYabiConfig(&yabi.InitYabi{BaseURL: yabiBaseURL})
+	yabi.SetYabiConfig(&yabi.InitYabi{
+		BaseURL:                yabiBaseURL,
+		DBConStr:               api.DBConStr(""),
+		AutoRemoveExpiredToken: 5,
+	})
 
 	// Initializes the http server
 	srv := &http.Server{
