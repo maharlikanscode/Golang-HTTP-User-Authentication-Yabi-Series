@@ -36,11 +36,14 @@ func AuthRouters(r *mux.Router) {
 	r.NotFoundHandler = http.HandlerFunc(PageNotFound)
 	r.HandleFunc("/api/v1/user/login", LoginUserEndpoint).Methods("POST")
 	r.HandleFunc("/api/v1/user/register", RegisterUserEndpoint).Methods("POST")
+	r.HandleFunc("/api/v1/user/password_reset", PasswordResetEndpoint).Methods("POST")
 	r.HandleFunc("/login", Login).Methods("GET")
 	r.HandleFunc("/register", Register).Methods("GET")
 	r.HandleFunc("/account_activation_sent", AccountActivationSent).Methods("GET")
 	r.HandleFunc("/activate/{token}", ActivateAccount).Methods("GET")
 	r.HandleFunc("/logout", Logout).Methods("GET")
+	r.HandleFunc("/password_reset", PasswordReset).Methods("GET")
+	r.HandleFunc("/password_reset_done", PasswordResetDone).Methods("GET")
 }
 
 // Logout function is to render the logout script from yabi
@@ -340,5 +343,105 @@ func ActivateAccount(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, data)
 	} else {
 		PageNotFound(w, r)
+	}
+}
+
+// PasswordReset function is to render the yabi password reset page.
+func PasswordReset(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles(config.SiteRootTemplate+"front/password_reset.html", config.SiteHeaderTemplate, config.SiteFooterTemplate))
+
+	data := contextData{
+		"PageTitle":    "Password Reset - " + config.SiteShortName,
+		"PageMetaDesc": config.SiteShortName + " password reset",
+		"CanonicalURL": r.RequestURI,
+		"CsrfToken":    csrf.Token(r),
+		"Settings":     config.SiteSettings,
+	}
+	tmpl.Execute(w, data)
+}
+
+// PasswordResetDone function is to render the yabi password reset done page.
+func PasswordResetDone(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles(config.SiteRootTemplate+"front/password_reset_done.html", config.SiteHeaderTemplate, config.SiteFooterTemplate))
+
+	data := contextData{
+		"PageTitle":    "Password Reset Done - " + config.SiteShortName,
+		"PageMetaDesc": config.SiteShortName + " password reset done",
+		"CanonicalURL": r.RequestURI,
+		"CsrfToken":    csrf.Token(r),
+		"Settings":     config.SiteSettings,
+	}
+	tmpl.Execute(w, data)
+}
+
+// PasswordResetEndpoint is to reset user's password process
+func PasswordResetEndpoint(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	body, errBody := ioutil.ReadAll(r.Body)
+	if errBody != nil {
+		itrlog.Error(errBody)
+		panic(errBody.Error())
+	}
+
+	keyVal := make(map[string]string)
+	json.Unmarshal(body, &keyVal)
+
+	email := keyVal["email"]
+
+	// Open the MySQL DSB Connection
+	dbYabi, err := sql.Open("mysql", DBConStr(""))
+	if err != nil {
+		itrlog.Error(err)
+	}
+	defer dbYabi.Close()
+
+	// Password reset email confirmation token payload
+	rt := timaan.RandomToken()
+	emailConfirmPayload := timaan.TP{
+		"EMAIL": email,
+	}
+	tok := timaan.TK{
+		TokenKey: rt,
+		Payload:  emailConfirmPayload,
+		ExpireOn: time.Now().Add(time.Minute * 30).Unix(),
+	}
+	newToken, err := timaan.GenerateToken(rt, tok)
+	if err != nil {
+		itrlog.Error(err)
+	}
+	confirmURL := yabi.YB.BaseURL + "reset_password_now/" + fmt.Sprint(newToken)
+
+	// Email confirmation
+	newPasswordResetEmailConfirmation := yabi.EmailConfig{
+		From:                 config.SiteEmail,
+		FromAlias:            config.SiteShortName + " Support",
+		To:                   email,
+		Subject:              config.SiteShortName + " password reset",
+		DefaultTemplate:      yabi.EmailFormatNewUser,
+		EmailConfirmationURL: confirmURL,
+		SiteSupportEmail:     config.SiteEmail,
+		SiteName:             config.SiteProperDomainName,
+	}
+
+	// Validate the user's credentials
+	isPasswordResetValid, err := yabi.ValidatePasswordReset(dbYabi, newPasswordResetEmailConfirmation)
+	if err != nil {
+		itrlog.Error(err)
+		w.Write([]byte(`{ "IsSuccess": "false", "AlertTitle": "User's Authentication Failed!", 
+		"AlertMsg": "` + err.Error() + `", "AlertType": "error", "RedirectURL": "" }`))
+		return
+	}
+
+	if isPasswordResetValid {
+		// Response back to the user
+		w.Write([]byte(`{ "IsSuccess": "true", "AlertTitle": "Password Reset Email Sent", 
+		"AlertMsg": " An email has been sent to your registered email address, follow the directions in the email to reset your password.",
+		"AlertType": "success", "RedirectURL": "` + yabi.YB.BaseURL + `password_reset_done" }`))
+	} else {
+		itrlog.Error(err)
+		w.Write([]byte(`{ "IsSuccess": "false", "AlertTitle": "Password Reset Failed!", 
+		"AlertMsg": "` + err.Error() + `", "AlertType": "error", "RedirectURL": "" }`))
 	}
 }

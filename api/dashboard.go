@@ -26,6 +26,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		"CanonicalURL": r.RequestURI,
 		"CsrfToken":    csrf.Token(r),
 		"Settings":     config.SiteSettings,
+		"Yabi":         yabi.YBUserData,
 	}
 	tmpl.Execute(w, data)
 }
