@@ -298,7 +298,7 @@ func GetUserInfo(dbCon *sql.DB, userName string) *User {
 		&u.UserName, &u.Email, &u.FirstName, &u.MiddleName, &u.LastName, &u.Suffix, &u.IsSuperUser,
 		&u.IsAdmin, &u.LastLogin, &u.DateJoined)
 	if err != nil {
-		itrlog.Error("error getting username: ", userName, ":", err)
+		itrlog.Error("ERROR FROM GetUserInfO: ", userName, ":", err)
 		return &User{}
 	}
 	return &u
@@ -315,9 +315,22 @@ func LastLogin(dbCon *sql.DB, userName string) {
 	defer upd.Close()
 }
 
+// DeleteUserToken will physically delete the specific user's token during logout process
+// This process will delete all of the user's specified token key and its token src
+func DeleteUserToken(dbCon *sql.DB, encUserName, tokenSrc string) {
+	upd, err := dbCon.Prepare("DELETE FROM " + YabiUserToken + " WHERE token_key = ? " +
+		"AND token_src = ? AND expire_on >= ?")
+	if err != nil {
+		itrlog.Error("ERROR FROM DeleteUserToken: ", err)
+	}
+	// Pass on all the parameter values here
+	upd.Exec(encUserName, tokenSrc, time.Now().Unix())
+	defer upd.Close()
+}
+
 // KeepToken stores the session token to the "yabi_user_token" table to make it persistent
 func KeepToken(dbCon *sql.DB, tokenKey, tokenSrc string, tokenData []byte, expireOn int64) error {
-	// Now, insert the new user's log here
+	// Now, insert the new user's auth token here
 	ins, err := dbCon.Prepare("INSERT INTO " + YabiUserToken + " (token_key, token_data, token_src, expire_on) VALUES" +
 		"(?, ?, ?, ?)")
 
@@ -357,4 +370,66 @@ func RestoreToken(dbCon *sql.DB, secretKey string) {
 			timaan.UT.Add(userName, []byte(t.TokenData))
 		}
 	}
+}
+
+// ValidatePasswordReset validate the user's registered email address to reset the password
+func ValidatePasswordReset(dbCon *sql.DB, e EmailConfig) (bool, error) {
+	// Check if email is empty
+	if len(strings.TrimSpace(e.To)) == 0 {
+		return false, errors.New("Email is Required")
+	}
+
+	// Check if email address is valid or not
+	if !sakto.IsEmailValid(e.To) {
+		return false, errors.New("Invalid Email Address, please try again")
+	}
+
+	// Check if the email address exist or not
+	if IsUserEmailExist(dbCon, e.To) {
+		return false, errors.New("Email is not Found, please try again")
+	}
+
+	// Check if subject is empty
+	emailSubject := "Password reset"
+	if len(strings.TrimSpace(e.Subject)) > 0 {
+		emailSubject = e.Subject
+	}
+
+	// Check if HTML Header template has been customized
+	emailHTMLHeader := YabiHTMLHeader // default to Yabi HTML Header
+	if len(strings.TrimSpace(e.CustomizeHeaderTemplate)) > 0 {
+		emailHTMLHeader = e.CustomizeHeaderTemplate
+	}
+
+	// Check if HTML Body template has been customized
+	emailHTMLBody := PasswordResetEmail(e.EmailConfirmationURL, e.To, e.SiteName, e.SiteSupportEmail) // default to Yabi HTML Body
+	if len(strings.TrimSpace(e.CustomizeBodyTemplate)) > 0 {
+		emailHTMLBody = e.CustomizeBodyTemplate
+	}
+
+	// Check if HTML Footer template has been customized
+	emailHTMLFooter := YabiHTMLFooter // default to Yabi HTML Footer
+	if len(strings.TrimSpace(e.CustomizeFooterTemplate)) > 0 {
+		emailHTMLFooter = e.CustomizeFooterTemplate
+	}
+
+	// Send an email confirmation now, prepare the HTML email content first
+	mailOpt := &sulat.SendMail{
+		Subject: emailSubject,
+		From:    sulat.NewEmail(e.FromAlias, e.From),
+		To:      sulat.NewEmail(e.ToAlias, e.To),
+		CC:      sulat.NewEmail(e.CCAlias, e.CC),
+		BCC:     sulat.NewEmail(e.BCCAlias, e.BCC),
+	}
+	htmlContent, err := sulat.SetHTML(&sulat.EmailHTMLFormat{
+		IsFullHTML: false,
+		HTMLHeader: emailHTMLHeader,
+		HTMLBody:   emailHTMLBody,
+		HTMLFooter: emailHTMLFooter,
+	})
+	_, err = sulat.SendEmailSG(mailOpt, htmlContent, &SGC)
+	if err != nil {
+		itrlog.Error("SendGrid error: ", err)
+	}
+	return true, nil
 }

@@ -5,6 +5,9 @@ import "time"
 // YabiUser is the exact table name for the "yabi_user" table
 const YabiUser = "yabi_user"
 
+// YabiTokenAuth is the login auth indicator for the yabi auth system
+const YabiTokenAuth = "auth"
+
 // User model collections for the user's basic information
 type User struct {
 	ID          int64     `json:"id"`

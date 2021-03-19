@@ -316,3 +316,118 @@ func NewUserActivation(confirmURL, userName, siteName, siteSupportEmail string) 
 </table>`
 	return bodyHTML
 }
+
+// PasswordResetEmail is the password reset email confirmation
+func PasswordResetEmail(confirmURL, email, siteName, siteSupportEmail string) string {
+	bodyHTML := `<table class="wrapper" role="module" data-type="image"
+	border="0" cellpadding="0" cellspacing="0" width="100%"
+	style="table-layout: fixed;"
+	data-muid="bKZJcGfRPJb7R2nzyp6ZB6">
+	<tbody>
+		<tr>
+			<td style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;"
+				valign="top" align="left">
+				<img class="max-width" border="0"
+					style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;"
+					src="https://user-images.githubusercontent.com/72076522/111016622-f40c5680-83e9-11eb-9c7e-19784ff8bf4a.png"
+					alt="" width="600"
+					data-responsive="true"
+					data-proportionally-constrained="false">
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="module" role="module" data-type="text"
+	border="0" cellpadding="0" cellspacing="0" width="100%"
+	style="table-layout: fixed;"
+	data-muid="gNWHzBzkFeWH4JDKd2Aikk"
+	data-mc-module-version="2019-10-22">
+	<tbody>
+		<tr>
+			<td style="background-color:#ffffff; padding:50px 0px 10px 0px; line-height:30px; text-align:inherit;"
+				height="100%" valign="top"
+				bgcolor="#ffffff">
+				<div>
+					<div
+						style="font-family: inherit; text-align: center">
+						<span style="color: #516775; font-size: 28px; font-family: georgia,serif"><strong>Password Reset</strong></span>
+					</div>
+					<div></div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="module" role="module" data-type="text"
+	border="0" cellpadding="0" cellspacing="0" width="100%"
+	style="table-layout: fixed;"
+	data-muid="bA2FfEE6abadx6yKoMr3F9"
+	data-mc-module-version="2019-10-22">
+	<tbody>
+		<tr>
+			<td style="background-color:#ffffff; padding:10px 40px 50px 40px; line-height:22px; text-align:inherit;"
+				height="100%" valign="top"
+				bgcolor="#ffffff">
+				<div>
+					<div
+						style="font-family: inherit; text-align: left">
+						<span style="font-family: verdana,geneva,sans-serif">
+							Hi ` + email + `,<br/><br/>
+
+							
+							Looks like you've forgotten your password! If so, click the link below to create a new password:
+							
+							<br/><br/>
+							If you continue to have problems accessing your account please feel free to contact us at ` + siteSupportEmail + `.
+							
+							<br/><br/>
+							If you didn't request this, please ignore this email.<br/><br/>
+							
+							<div>
+								<table border="0" cellpadding="0" cellspacing="0"
+									class="module" data-role="module-button"
+									data-type="button" role="module"
+									style="table-layout:fixed" width="100%"
+									data-muid="bKHWQMgPkL5opYCkxiM6aS">
+									<tbody>
+										<tr>
+											<td align="center" class="outer-td"
+												style="padding:20px 0px 0px 0px;"
+												bgcolor="">
+												<table border="0" cellpadding="0"
+													cellspacing="0"
+													class="button-css__deep-table___2OZyb wrapper-mobile"
+													style="text-align:center">
+													<tbody>
+														<tr>
+															<td align="center"
+																bgcolor="#993300"
+																class="inner-td"
+																style="border-radius:6px; font-size:16px; text-align:center; background-color:inherit;">
+																<a style="background-color:#993300; border:1px solid #993300; border-color:#993300; border-radius:0px; border-width:1px; color:#ffffff; display:inline-block; font-family:verdana,geneva,sans-serif; font-size:16px; font-weight:normal; letter-spacing:1px; line-height:30px; padding:12px 20px 12px 20px; text-align:center; text-decoration:none; border-style:solid;"
+																	href="` + confirmURL + `"
+																	target="_blank">Reset your Password</a>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							
+							<br/><br/>
+							Thanks,<br/>
+							P.S. Need help? Contact us anytime with your questions and/or feedback.<br/>
+						</span>
+					</div>
+					<div></div>
+				</div>
+				
+			</td>
+		</tr>
+	</tbody>
+</table>`
+	return bodyHTML
+}
