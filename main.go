@@ -31,6 +31,7 @@ var IsProdServerMode bool = false // true
 func init() {
 	// Custom settings to initialize the itrlog.
 	itrlog.SetLogInit(50, 90, "logs_gowebapp", "")
+	// This is for the github changes test only
 }
 
 func main() {
